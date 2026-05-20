@@ -81,21 +81,15 @@ async function run() {
     const commentsCollection = db.collection("comments");
     console.log("Successfully connected to MongoDB Workspace!");
 
-    // =========================================================================
-    // 🔑 JWT TOKEN GENERATION ROUTE
-    // =========================================================================
+    // token generator
+   
     app.post("/jwt", async (req, res) => {
       const user = req.body;
       const token = jwt.sign(user, jwtSecret, {
         expiresIn: "7d",
       });
 
-      // res.cookie("token", token, {
-      //   httpOnly: true,
-      //   secure: true,
-      //   sameSite: "strict",
-      //   maxAge: 7 * 24 * 60 * 60 * 1000,
-      // });
+      
 
 
 
@@ -103,6 +97,7 @@ res.cookie("token", token, {
   httpOnly: true,
   secure: false,
   sameSite: "lax",
+  // fix lax
   maxAge: 7 * 24 * 60 * 60 * 1000,
 });
 
@@ -114,7 +109,7 @@ res.cookie("token", token, {
 
 
 
-// logout add
+// logout function add 
 
 
 app.post("/logout", async (req, res) => {
@@ -148,9 +143,6 @@ app.post("/logout", async (req, res) => {
 
 
 
-    // =========================================================================
-    // 💡 IDEAS API ROUTES
-    // =========================================================================
 
     // ১. ADD NEW IDEA (🔒 PROTECTED + SECURITY FIX)
     app.post("/ideas", verifyToken, async (req, res) => {
