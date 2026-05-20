@@ -12,7 +12,10 @@ const port = process.env.PORT || 5000;
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ["http://localhost:3000"],
+    origin: ["http://localhost:3000",
+      clientUrl
+
+    ],
     credentials: true,
   }),
 );
@@ -22,7 +25,7 @@ app.use(express.json());
 // .env
 const uri = process.env.MONGO_DB_URI;
 const jwtSecret = process.env.JWT_SECRET;
-
+const clientUrl=process.env.CLIENT_URL
 // Db client
 
 const client = new MongoClient(uri, {
