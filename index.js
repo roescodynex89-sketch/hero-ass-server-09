@@ -33,9 +33,7 @@ const client = new MongoClient(uri, {
   },
 });
 
-
 //  middleware add
-
 
 const verifyToken = (req, res, next) => {
   const token = req.cookies.token;
@@ -60,18 +58,6 @@ const verifyToken = (req, res, next) => {
   });
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
 async function run() {
   try {
     await client.connect();
@@ -82,74 +68,48 @@ async function run() {
     console.log("Successfully connected to MongoDB Workspace!");
 
     // token generator
-   
+
     app.post("/jwt", async (req, res) => {
       const user = req.body;
       const token = jwt.sign(user, jwtSecret, {
         expiresIn: "7d",
       });
 
-      
-
-
-
-res.cookie("token", token, {
-  httpOnly: true,
-  secure: false,
-  sameSite: "lax",
-  // fix lax
-  maxAge: 7 * 24 * 60 * 60 * 1000,
-});
-
-
-
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+        // fix lax
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
 
       res.send({ token });
     });
 
+    // logout function add
 
+    app.post("/logout", async (req, res) => {
+      try {
+        res
+          .clearCookie("token", {
+            httpOnly: true,
+            secure: true,
+            sameSite: "strict",
+          })
+          .send({ success: true, message: "Logged out successfully" });
+      } catch (error) {
+        res
+          .status(500)
+          .send({ success: false, message: "Server error during logout" });
+      }
+    });
 
-// logout function add 
-
-
-app.post("/logout", async (req, res) => {
-  try {
-    res
-      .clearCookie("token", {
-        httpOnly: true,
-        secure: true,
-        sameSite: "strict",
-      })
-      .send({ success: true, message: "Logged out successfully" });
-  } catch (error) {
-    res.status(500).send({ success: false, message: "Server error during logout" });
-  }
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // ১. ADD NEW IDEA (🔒 PROTECTED + SECURITY FIX)
+    // 1. add-idea(private)
     app.post("/ideas", verifyToken, async (req, res) => {
       try {
         const idea = req.body;
 
-        // ✅ ADD IDEA SECURITY FIX
+        //  FIX
         if (req.user.email !== idea.userEmail) {
           return res
             .status(403)
@@ -169,7 +129,7 @@ app.post("/logout", async (req, res) => {
       }
     });
 
-    // ২. GET SEARCH & FILTER & TRENDING LIMIT (🌍 PUBLIC)
+    // 2..search api
     app.get("/ideas", async (req, res) => {
       try {
         const { search, category, limit } = req.query;
@@ -194,7 +154,7 @@ app.post("/logout", async (req, res) => {
       }
     });
 
-    // ৩. SINGLE IDEA DETAILS (🌍 PUBLIC)
+    // single-idea
     app.get("/ideas/:id", verifyToken, async (req, res) => {
       try {
         const id = req.params.id;
@@ -218,16 +178,11 @@ app.post("/logout", async (req, res) => {
       }
     });
 
-    // =========================================================================
-    // 💬 COMMENTS API ROUTES
-    // =========================================================================
-
-    // ১. ADD COMMENT (🔒 PROTECTED + SECURITY FIX)
+    // 00comments crud
     app.post("/comments", verifyToken, async (req, res) => {
       try {
         const comment = req.body;
 
-        // ✅ ADD COMMENT SECURITY FIX
         if (req.user.email !== comment.userEmail) {
           return res
             .status(403)
@@ -243,7 +198,7 @@ app.post("/logout", async (req, res) => {
       }
     });
 
-    // ২. GET ALL COMMENTS FOR AN IDEA (🌍 PUBLIC)
+    //
     app.get("/comments/:ideaId", async (req, res) => {
       try {
         const ideaId = req.params.ideaId;
@@ -257,7 +212,6 @@ app.post("/logout", async (req, res) => {
       }
     });
 
-    // ৩. DELETE COMMENT (🔒 PROTECTED)
     app.delete("/comments/:id", verifyToken, async (req, res) => {
       try {
         const id = req.params.id;
@@ -319,8 +273,7 @@ app.post("/logout", async (req, res) => {
           { _id: new ObjectId(id) },
           {
             $set: {
-
-commentText:text,
+              commentText: text,
               // text,
               updatedAt: new Date(),
             },
@@ -336,11 +289,7 @@ commentText:text,
       }
     });
 
-    // =========================================================================
-    // 🔑 DASHBOARD & USER WORKSPACE API ROUTES (🔒 PROTECTED + MOST IMPORTANT SECURITY FIXES)
-    // =========================================================================
-
-    // ১. MY IDEAS LIST (🔒 PROTECTED + SECURITY FIX)
+    //  MY IDEAS LIST
     app.get("/my-idea", verifyToken, async (req, res) => {
       try {
         const email = req.query.email;
@@ -350,7 +299,6 @@ commentText:text,
             .send({ success: false, message: "Email query is required" });
         }
 
-        // ✅ MY IDEAS SECURITY FIX
         if (req.user.email !== email) {
           return res
             .status(403)
@@ -370,14 +318,12 @@ commentText:text,
       }
     });
 
-    // ২. UPDATE IDEA (🔒 PROTECTED + 🔴 DB EXISTING OWNER SECURITY FIX)
     app.patch("/idea/:id", verifyToken, async (req, res) => {
       try {
         const id = req.params.id;
         const updatedData = req.body;
         const query = { _id: new ObjectId(id) };
 
-        // ✅ UPDATE IDEA EXISTING DB OWNER CHECK
         const existingIdea = await ideasCollection.findOne(query);
         if (!existingIdea) {
           return res
@@ -401,7 +347,6 @@ commentText:text,
       }
     });
 
-    // ৩. DELETE IDEA (🔒 PROTECTED + 🔴 DB EXISTING OWNER SECURITY FIX)
     app.delete("/idea/:id", verifyToken, async (req, res) => {
       try {
         const id = req.params.id;
@@ -427,7 +372,7 @@ commentText:text,
       }
     });
 
-    // ৪. MY INTERACTIONS (🔒 PROTECTED + SECURITY FIX)
+    // ৪. MY INTERACTIONS-----
     app.get("/my-interactions", verifyToken, async (req, res) => {
       try {
         const email = req.query.email;
@@ -437,7 +382,7 @@ commentText:text,
             .send({ success: false, message: "Email is required" });
         }
 
-        // ✅ MY INTERACTIONS SECURITY FIX
+        // FIX
         if (req.user.email !== email) {
           return res
             .status(403)
