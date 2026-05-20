@@ -63,7 +63,7 @@ const verifyToken = (req, res, next) => {
 
 async function run() {
   try {
-    await client.connect();
+    // await client.connect();
 
     const db = client.db("hero-server");
     const ideasCollection = db.collection("ideas");
@@ -355,7 +355,7 @@ async function run() {
         const id = req.params.id;
         const query = { _id: new ObjectId(id) };
 
-        // ✅ DELETE IDEA EXISTING DB OWNER CHECK
+        //  DELETE IDEA
         const existingIdea = await ideasCollection.findOne(query);
         if (!existingIdea) {
           return res
