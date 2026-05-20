@@ -7,7 +7,7 @@ const cookieParser = require("cookie-parser");
 dotenv.config();
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const port = process.env.PORT || 5000;
-
+const clientUrl=process.env.CLIENT_URL
 // app.use(cors());
 app.use(cookieParser());
 app.use(
