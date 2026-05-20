@@ -8,6 +8,10 @@ dotenv.config();
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const port = process.env.PORT || 5000;
 const clientUrl=process.env.CLIENT_URL
+const uri = process.env.MONGO_DB_URI;
+const jwtSecret = process.env.JWT_SECRET;
+const clientUrl=process.env.CLIENT_URL
+
 // app.use(cors());
 app.use(cookieParser());
 app.use(
@@ -23,9 +27,7 @@ app.use(
 app.use(express.json());
 
 // .env
-const uri = process.env.MONGO_DB_URI;
-const jwtSecret = process.env.JWT_SECRET;
-const clientUrl=process.env.CLIENT_URL
+
 // Db client
 
 const client = new MongoClient(uri, {
@@ -80,8 +82,8 @@ async function run() {
 
       res.cookie("token", token, {
         httpOnly: true,
-        secure: false,
-        sameSite: "lax",
+        secure: true,
+        sameSite: "none",
         // fix lax
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
@@ -97,7 +99,7 @@ async function run() {
           .clearCookie("token", {
             httpOnly: true,
             secure: true,
-            sameSite: "strict",
+            sameSite: "true",
           })
           .send({ success: true, message: "Logged out successfully" });
       } catch (error) {
