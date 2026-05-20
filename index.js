@@ -19,8 +19,11 @@ app.use(
 
 app.use(express.json());
 
+// .env
 const uri = process.env.MONGO_DB_URI;
 const jwtSecret = process.env.JWT_SECRET;
+
+// Db client
 
 const client = new MongoClient(uri, {
   serverApi: {
@@ -30,25 +33,8 @@ const client = new MongoClient(uri, {
   },
 });
 
-// =========================================================================
-// 🛡️ JWT VERIFICATION MIDDLEWARE
-// =========================================================================
-// const verifyToken = (req, res, next) => {
-//   const authHeader = req.headers.authorization;
-//   if (!authHeader) {
-//     return res
-//       .status(401)
-//       .send({ success: false, message: "Unauthorized Access" });
-//   }
-//   const token = authHeader.split(" ")[1];
-//   jwt.verify(token, jwtSecret, (err, decoded) => {
-//     if (err) {
-//       return res.status(403).send({ success: false, message: "Invalid Token" });
-//     }
-//     req.user = decoded;
-//     next();
-//   });
-// };
+
+//  middleware add
 
 
 const verifyToken = (req, res, next) => {
