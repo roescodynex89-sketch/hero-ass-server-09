@@ -99,7 +99,7 @@ async function run() {
           .clearCookie("token", {
             httpOnly: true,
             secure: true,
-            sameSite: "true",
+            sameSite: "none",
           })
           .send({ success: true, message: "Logged out successfully" });
       } catch (error) {
