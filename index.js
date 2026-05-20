@@ -10,7 +10,7 @@ const port = process.env.PORT || 5000;
 const clientUrl=process.env.CLIENT_URL
 const uri = process.env.MONGO_DB_URI;
 const jwtSecret = process.env.JWT_SECRET;
-const clientUrl=process.env.CLIENT_URL
+
 
 // app.use(cors());
 app.use(cookieParser());
