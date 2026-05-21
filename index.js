@@ -7,7 +7,7 @@ const cookieParser = require("cookie-parser");
 dotenv.config();
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const port = process.env.PORT || 5000;
-const clientUrl=process.env.CLIENT_URL
+// const clientUrl=process.env.CLIENT_URL
 const uri = process.env.MONGO_DB_URI;
 const jwtSecret = process.env.JWT_SECRET;
 
@@ -16,10 +16,7 @@ const jwtSecret = process.env.JWT_SECRET;
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ["http://localhost:3000",
-      clientUrl
-
-    ],
+    origin:process.env.CLIENT_URL,
     credentials: true,
   }),
 );
