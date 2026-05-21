@@ -11,6 +11,13 @@ const port = process.env.PORT || 5000;
 const uri = process.env.MONGO_DB_URI;
 const jwtSecret = process.env.JWT_SECRET;
 
+// try
+
+app.set("trust proxy",1)
+
+
+
+
 // app.use(cors());
 app.use(cookieParser());
 app.use(
