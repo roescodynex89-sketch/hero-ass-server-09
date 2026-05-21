@@ -103,6 +103,10 @@ async function run() {
             httpOnly: true,
             secure: true,
             sameSite: "none",
+// add kori ki hoi
+partitioned:true,
+
+
           })
           .send({ success: true, message: "Logged out successfully" });
       } catch (error) {
