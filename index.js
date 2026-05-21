@@ -15,7 +15,7 @@ app.set("trust proxy", 1);
 app.use(cookieParser());
 app.use(
   cors({
-    origin: [process.env.CLIENT_URL,"https://localhost:3000"],
+    origin: process.env.CLIENT_URL,
     credentials: true,
   }),
 );
@@ -77,9 +77,9 @@ async function run() {
 
       res.cookie("token", token, {
         httpOnly: true,
-        secure: true,
-        sameSite: "none",
-        partitioned: true,
+        secure:  process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        // partitioned: true,
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 
@@ -92,9 +92,9 @@ async function run() {
         res
           .clearCookie("token", {
             httpOnly: true,
-            secure: true,
-            sameSite: "none",
-            partitioned: true,
+             secure: process.env.NODE_ENV === "production",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+            // partitioned: true,
           })
           .send({ success: true, message: "Logged out successfully" });
       } catch (error) {
