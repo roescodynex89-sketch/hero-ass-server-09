@@ -88,6 +88,7 @@ async function run() {
         secure: true,
         sameSite: "none",
         // fix lax
+        partitioned:true,
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 
