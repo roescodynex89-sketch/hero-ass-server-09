@@ -32,7 +32,7 @@ const client = new MongoClient(uri, {
 });
 
 const verifyToken = (req, res, next) => {
-  let token = req.cookies?.token;
+  const token = req.cookies?.token || req.headers.authorization?.split("")[1]
 
   if (!token && req.headers.authorization) {
     const authHeader = req.headers.authorization;
