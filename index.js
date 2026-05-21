@@ -15,7 +15,7 @@ app.set("trust proxy", 1);
 app.use(cookieParser());
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: [process.env.CLIENT_URL,"https://localhost:3000"],
     credentials: true,
   }),
 );
